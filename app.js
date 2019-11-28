@@ -9,12 +9,13 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer;
+var scores, roundScore, activePlayer, gameOn;
 
 startGame();
 
 document.querySelector(".btn-roll").addEventListener('click', function() {
-    //Generate random number between 1 and 6 with dice
+    if(gameOn) {
+      //Generate random number between 1 and 6 with dice
     let dice = Math.floor(Math.random() * 6 + 1);
     //Change the dice display to block or visible
     let diceDom = document.querySelector(".dice");
@@ -36,11 +37,13 @@ document.querySelector(".btn-roll").addEventListener('click', function() {
             activePlayer = 0;
         }*/
         nextPlayer();
-    }
+      }
+    }    
 });
 
 document.querySelector(".btn-hold").addEventListener('click', function() {
-    //1. Update the global player score
+    if(gameOn) {
+        //1. Update the global player score
         scores[activePlayer] += roundScore;
     //2. Update the global player score
         document.getElementById("score-" + activePlayer).textContent = scores[activePlayer];
@@ -54,14 +57,13 @@ document.querySelector(".btn-hold").addEventListener('click', function() {
         document.querySelector(".player-" + activePlayer + "-panel").classList.remove("active");
         //Add the winner style class 
         document.querySelector(".player-" + activePlayer + "-panel").classList.add("winner");
-        //Remove the roll dice button
-        document.querySelector(".btn-roll").style.display = "none";
-        //Remove the hold button
-        document.querySelector(".btn-hold").style.display = "none";
-    } else {
+        gameOn = false;
+        } else {
     //4. Next Player
          nextPlayer();
         }
+     }
+    
     });
 
 function nextPlayer () {
@@ -83,6 +85,7 @@ function startGame() {
     scores = [0,0];
     roundScore = 0;
     activePlayer = 0;
+    gameOn = true;
     document.getElementById("score-0").textContent = '0';
     document.getElementById("score-1").textContent = '0';
     document.getElementById("current-0").textContent = '0';
@@ -95,8 +98,5 @@ function startGame() {
     document.querySelector(".player-1-panel").classList.remove("active");
     document.querySelector(".player-0-panel").classList.add("active"); 
     document.querySelector(".dice").style.display = 'none';
-    //Display the roll dice button
-    document.querySelector(".btn-roll").style.display = "block";
-    //Display the hold button
-    document.querySelector(".btn-hold").style.display = "block";
+    
 }
