@@ -8,8 +8,13 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
 
 */
-
-var scores, roundScore, activePlayer, gameOn;
+/*
+Change the Pig-Game to follow these rules:
+1. A player loses his entire score when he rolls 2 six in a row. 
+   After that, it is the next player's turn. 
+   (HINT: Always save the previous dice roll in a separate variable.)
+*/
+let scores, roundScore, activePlayer, gameOn, previousDiceRoll;
 
 startGame();
 
@@ -23,13 +28,26 @@ document.querySelector(".btn-roll").addEventListener('click', function() {
     //Select the appropriate image source to display the dice
     diceDom.src = "dice-" + dice + ".png";
 
+    //Update the round score only if dice greater than 1 or not equal to 1 and 
+    //NOT two 6 in a roll
+    //Check if previous dice roll equals current dice roll equals six
+        if(previousDiceRoll === 6 && dice === 6) {
+            roundScore = 0;
+            scores[activePlayer] = 0;
+    //Update the current player score        
+            document.querySelector("#current-" + activePlayer).textContent = roundScore;
+    //Update the global player score
+            document.getElementById("score-" + activePlayer).textContent = scores[activePlayer];
+            nextPlayer();
+        } else if(dice !== 1) {
     //Update the round score only if dice greater than 1 or not equal to 1
-    if(dice !== 1) {
         //Update the score
         roundScore += dice;
         //Display the score
         document.querySelector("#current-" + activePlayer).textContent = roundScore;
-    } else {
+        
+
+        } else {
         /*Other player's turn
         if(activePlayer === 0) {
             activePlayer = 1;
@@ -38,14 +56,17 @@ document.querySelector(".btn-roll").addEventListener('click', function() {
         }*/
         nextPlayer();
       }
+      previousDiceRoll = dice;
     }    
 });
 
 document.querySelector(".btn-hold").addEventListener('click', function() {
     if(gameOn) {
-        //1. Update the global player score
+    //Set previousDiceRoll value to zero
+         previousDiceRoll = 0;    
+    //1. Update the global player score
         scores[activePlayer] += roundScore;
-    //2. Update the global player score
+    //2. Update the global player score UI
         document.getElementById("score-" + activePlayer).textContent = scores[activePlayer];
     //3. Check if player global score is greater or equal to 100
          if(scores[activePlayer] >= 100) {
@@ -63,8 +84,7 @@ document.querySelector(".btn-hold").addEventListener('click', function() {
          nextPlayer();
         }
      }
-    
-    });
+   });
 
 function nextPlayer () {
     activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
@@ -76,7 +96,7 @@ function nextPlayer () {
         document.querySelector(".player-0-panel").classList.toggle("active");
         document.querySelector(".player-1-panel").classList.toggle("active");
         //Remove the dice to show other player turn
-        document.querySelector(".dice").style.display = 'none';
+        //document.querySelector(".dice").style.display = 'none';
 }
 
 document.querySelector(".btn-new").addEventListener('click', startGame);
